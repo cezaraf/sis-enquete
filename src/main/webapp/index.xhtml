@@ -1,0 +1,271 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+
+	<title>Gestão de Enquetes</title>
+
+	<h:outputScript library="primefaces" name="jquery/jquery.js" />
+	
+	<script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/js/scripts.js"></script>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+	<f:metadata>
+
+		<f:event type="preRenderView" listener="#{enqueteController.init}" />
+
+	</f:metadata>
+
+</h:head>
+
+<h:body style="padding:20px;">
+
+	<div class="container-fluid">
+
+		<h:form id="formCadastroEnquete" styleClass="form-horizontal">
+		
+			<p:remoteCommand update="@form" name="addOpcao" actionListener="#{enqueteController.addOpcao}" />
+					
+			<p:remoteCommand update="@form" name="removerOpcao" actionListener="#{enqueteController.removerOpcao}" />
+			
+			<p:remoteCommand update="@form :formListagem" name="salvar" actionListener="#{enqueteController.save}" />
+			
+			<p:remoteCommand update="@form :formListagem" name="remover" actionListener="#{enqueteController.remover}" />
+			
+			<p:remoteCommand update="@form" name="novo" actionListener="#{enqueteController.novo}" />
+			
+			<p:remoteCommand update="@form" name="carregar" actionListener="#{enqueteController.alterar}" />
+		
+			<p:messages />
+		
+			<div class="panel panel-primary">
+			
+  				<div class="panel-heading">Enquete</div>
+  				
+  				<div class="panel-body">
+
+					<div class="row">
+						
+						<div class="col-md-2">
+					
+							<label for="pergunta">Pergunta:</label>
+			
+						</div>
+						
+						<div class="col-md-10">
+						
+							<p:inputText styleClass="form-control" placeholder="Insira a pergunta da enquete" style="width:100%" id="pergunta" value="#{enqueteController.formulario.entidade.pergunta}" />
+							
+						</div>
+			
+					</div>
+					
+					<div class="row">
+						
+						<div class="col-md-2">
+					
+							<label for="descricao">Descrição:</label>
+			
+						</div>
+						
+						<div class="col-md-10">
+						
+							<p:inputText styleClass="form-control" placeholder="Insira a descrição da enquete" style="width:100%" id="descricao" value="#{enqueteController.formulario.entidade.descricao}" />
+							
+						</div>
+			
+					</div>
+					
+					<div class="row">
+						
+						<div class="col-md-2">
+					
+							<label for="descricao">Tipo Seleção:</label>
+			
+						</div>
+						
+						<div class="col-md-10">
+						
+							<h:selectOneMenu styleClass="form-control" value="#{enqueteController.formulario.entidade.tipoSelecao}">
+							
+								<f:selectItem itemLabel="Selecione..." />
+							
+								<f:selectItems noSelectionValue="Selecione..." value="#{enqueteController.formulario.tipoSelecaoList}" var="ts" itemLabel="#{ts.label}" itemValue="#{ts}" />
+							
+							</h:selectOneMenu>
+							
+						</div>
+			
+					</div>
+					
+					<div class="row">
+						
+						<div class="col-md-2">
+					
+							<label for="descricao">Período:</label>
+			
+						</div>
+						
+						<div class="col-md-6">
+						
+							<div class="input-group">
+						
+								<p:inputMask mask="99/99/9999" styleClass="form-control" placeholder="Data inicial formato DD/MM/AAAA" style="width:100%" id="dataInicial" value="#{enqueteController.formulario.entidade.dataInicio}">
+								
+									<f:convertDateTime  locale="pt_BR" pattern="dd/MM/yyyy" />
+								
+								</p:inputMask>
+								
+								<span class="input-group-addon">
+        			
+        							<h:outputText value=" a " />
+        							
+      							</span>
+      							
+								<p:inputMask mask="99/99/9999" styleClass="form-control" placeholder="Data final formato DD/MM/AAAA" style="width:100%" id="dataFinal" value="#{enqueteController.formulario.entidade.dataFinal}">
+								
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+								
+								</p:inputMask>
+							
+							</div>
+							
+						</div>
+			
+					</div>
+					
+					<br />
+					
+					<div class="pull-right">
+		
+						<button onclick="addOpcao();" type="button" class="btn btn-primary">
+						
+			  				<span class="glyphicon glyphicon-plus" /> Adicionar
+						
+						</button>
+					
+					</div>
+		
+					<p:dataTable styleClass="table" emptyMessage="Nenhuma opção cadastrada" value="#{enqueteController.formulario.entidade.opcoes}" var="op" rowIndexVar="index">
+					
+						<p:column headerText="Opções">
+						
+							<p:inputText style="width:100%" id="conteudo" value="#{op.conteudo}">
+							
+								<p:watermark for="conteudo" value="Opção #{index + 1}" />
+							
+							</p:inputText>
+						
+						</p:column>
+						
+						<p:column headerText="Ação" style="width:10%;text-align:center;">
+						
+							<button style="margin-rigth:auto;" onclick="removerOpcao([{name : 'opcaoIndex', value : '#{index}'}]);" type="button" class="btn btn-danger">
+					
+		  						<span class="glyphicon glyphicon-minus"></span>
+					
+							</button>
+						
+						</p:column>
+					
+					</p:dataTable>
+					
+					<div class="pull-right">
+		
+						<button onclick="salvar();" type="button" class="btn btn-primary">
+						
+			  				<span class="glyphicon glyphicon-floppy-disk" /> Salvar
+						
+						</button>
+						
+						<button onclick="novo();" type="button" class="btn btn-danger">
+						
+			  				<span class="glyphicon glyphicon-floppy-disk" /> Cancelar
+						
+						</button>
+					
+					</div>
+					
+				</div>
+				
+			</div>				
+		
+		</h:form>	
+		
+		<h:form id="formListagem">
+	
+			<p:dataTable value="#{enqueteController.formulario.entidades}" var="e" emptyMessage="Nenhuma enquete cadastrada" paginator="true">
+		
+				<p:column headerText="Cod.">
+		
+					<h:outputText value="#{e.id}" />
+		
+				</p:column>
+				
+				<p:column headerText="Período" style="text-align:center;">
+		
+					<h:outputText value="#{e.dataInicio}">
+					
+						<f:convertDateTime  locale="pt_BR" pattern="dd/MM/yyyy" />
+					
+					</h:outputText>
+					
+					<h:outputText value=" a " />
+					
+					<h:outputText value="#{e.dataFinal}">
+					
+						<f:convertDateTime  locale="pt_BR" pattern="dd/MM/yyyy" />
+					
+					</h:outputText>
+		
+				</p:column>
+		
+				<p:column headerText="Descrição">
+		
+					<h:outputText value="#{e.descricao}" />
+		
+				</p:column>
+		
+				<p:column headerText="Pergunta">
+		
+					<h:outputText value="#{e.pergunta}" />
+		
+				</p:column>
+		
+				<p:column headerText="Opções" style="text-align:center;">
+
+					<button style="margin-rigth:auto;" onclick="carregar([{name : 'idEnquete', value : '#{e.id}'}]);" type="button" class="btn btn-primary">
+			
+	 					<span class="glyphicon glyphicon-edit"></span>
+			
+					</button>
+				
+					<button style="margin-rigth:auto;" onclick="remover([{name : 'idEnquete', value : '#{e.id}'}]);" type="button" class="btn btn-danger">
+			
+	 					<span class="glyphicon glyphicon-minus"></span>
+			
+					</button>
+					
+					<h:commandLink styleClass="btn btn-primary" style="color:white;" action="visualizarResultado" value="Resultado">
+					
+						<f:setPropertyActionListener target="#{votarController.formulario.idEnquete}" value="#{e.id}" />
+					
+					</h:commandLink>
+		
+				</p:column>
+		
+			</p:dataTable>
+			
+		</h:form>
+	
+	</div>
+
+</h:body>
+
+</html>

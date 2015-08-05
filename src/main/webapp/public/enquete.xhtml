@@ -1,0 +1,99 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+
+	<title>Enquete</title>
+
+	<h:outputScript library="primefaces" name="jquery/jquery.js" />
+	
+	<script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/js/scripts.js"></script>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	
+	<f:metadata>
+
+		<f:event type="preRenderView" listener="#{votarController.init}" />
+
+	</f:metadata>
+
+</h:head>
+
+<h:body style="padding:20px;">
+
+	<div class="container-fluid">
+	
+		<h:form>
+
+			<p:remoteCommand update="@form" name="votar" actionListener="#{votarController.votar}" />
+		
+			<h:panelGroup styleClass="alert alert-dange" rendered="#{empty votarController.formulario.enquete}" layout="block">
+			
+				<div class="alert alert-danger" role="alert">
+	
+					Nenhuma enquete ativa no período			
+	  				
+				</div>
+			
+			</h:panelGroup>
+			
+			<h:panelGroup rendered="#{not empty votarController.formulario.enquete}" styleClass="panel panel-primary" layout="block">
+			
+				<div class="panel-heading">
+			
+					#{votarController.formulario.enquete.pergunta}
+				
+				</div>
+			
+				<div class="panel-body">
+				
+					<p:messages />
+	    	
+		  			<div class="list-group">
+		  			
+			  			<ui:repeat var="op" value="#{votarController.formulario.enquete.opcoes}">
+			  			
+			  				<h:panelGroup layout="block" rendered="#{votarController.formulario.enquete.selecaoMultipla}" class="checkbox">
+			  					
+		          				<label><input type="checkbox" name="opcao" value="#{op.id}" />#{op.conteudo}</label>
+		          				
+		        			</h:panelGroup>
+		        			
+			  				<h:panelGroup layout="block" rendered="#{votarController.formulario.enquete.selecaoUnica}" class="radio">
+			  					
+		          				<label><input type="radio" name="opcao" value="#{op.id}" />#{op.conteudo}</label>
+		          				
+		        			</h:panelGroup>
+		        			
+			  			</ui:repeat>
+		  			
+		  			</div>
+		  			
+					<button style="margin-rigth:auto;" onclick="votar();" type="button" class="btn btn-primary">
+			
+	 					<span class="glyphicon glyphicon-ok"></span> Votar
+			
+					</button>
+					
+					<a style="margin-rigth:auto;" href="#{facesContext.externalContext.requestContextPath}/public/resultado.jsf" class="btn btn-primary">
+			
+	 					<span class="glyphicon glyphicon-list-alt"></span> Resultado
+			
+					</a>
+	    			
+	  			</div>
+	  			
+			</h:panelGroup>
+			
+		</h:form>
+	
+	</div>
+
+</h:body>
+
+</html>

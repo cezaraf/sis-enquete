@@ -1,0 +1,75 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+
+	<title>Enquete</title>
+
+	<h:outputScript library="primefaces" name="jquery/jquery.js" />
+	
+	<script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/js/scripts.js"></script>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	
+	<f:metadata>
+
+		<f:event type="preRenderView" listener="#{votarController.initResultado}" />
+
+	</f:metadata>
+
+</h:head>
+
+<h:body style="padding:20px;">
+
+	<div class="container-fluid">
+	
+		<h:form>
+		
+			<h:panelGroup styleClass="alert alert-dange" rendered="#{empty votarController.formulario.resultado}" layout="block">
+			
+				<div class="alert alert-danger" role="alert">
+	
+					Nenhuma enquete ativa no período			
+	  				
+				</div>
+			
+			</h:panelGroup>
+			
+			<h:panelGroup rendered="#{not empty votarController.formulario.resultado}" styleClass="panel panel-primary" layout="block">
+			
+				<div class="panel-heading">
+			
+					#{votarController.formulario.resultado.pergunta}
+				
+				</div>
+			
+				<div class="panel-body">
+				
+		  			<ui:repeat var="op" value="#{votarController.formulario.resultado.opcoes}">
+		  			
+		  				#{op.opcao}
+		  			
+						<div class="progress">
+  	
+  							<div class="progress-bar" role="progressbar" aria-valuenow="#{op.percentualInt}" aria-valuemin="0" aria-valuemax="100" style="width: #{op.percentualInt}%;">#{op.percentualInt}%</div>
+  							
+  						</div>
+	        			
+		  			</ui:repeat>
+		  			
+	  			</div>
+	  			
+			</h:panelGroup>
+			
+		</h:form>
+	
+	</div>
+
+</h:body>
+
+</html>
